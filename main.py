@@ -8,9 +8,6 @@ from core.rocket_animation import RocketAnimation
 
 STARS_NAMBER = 50
 MAX_TIKS_TO_BLINK = 10  # in ticks
-TIC_TIMEOUT = 0.003
-
-NEED_WIPE_ROCKET = True
 
 
 async def blink(canvas, row, column, symbol="*", tiks_to_blink=10):
@@ -56,7 +53,7 @@ def draw(canvas):
 
     rocket_animation = RocketAnimation(canvas)
 
-    coroutines = [rocket_animation.clear()] + stars + shots + [rocket_animation.draw()]
+    coroutines = stars + shots + [rocket_animation.draw()]
 
     while True:
         for coroutine in coroutines[:]:
@@ -66,7 +63,7 @@ def draw(canvas):
                 coroutines.remove(coroutine)
 
         canvas.refresh()
-        time.sleep(TIC_TIMEOUT)
+        # time.sleep(TIC_TIMEOUT)
 
 
 def run():

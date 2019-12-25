@@ -1,5 +1,8 @@
 import asyncio
+import time
 from core.curses_tools import read_controls, draw_frame, get_frame_size
+
+TIC_TIMEOUT = 0.01
 
 
 class RocketAnimation:
@@ -11,7 +14,7 @@ class RocketAnimation:
         self._load_rocket_frames()
         self._init_top_positions()
         self._frame_swither = self._init_frame_switcher()
-        self._frame_swither.send(None)
+        # self._frame_swither.send(None)
 
     async def draw(self):
         while True:
@@ -22,6 +25,17 @@ class RocketAnimation:
                 start_row=self.row,
                 start_column=self.column,
                 text=self.current_frame,
+            )
+
+            time.sleep(TIC_TIMEOUT)
+
+            await asyncio.sleep(1)
+            draw_frame(
+                canvas=self._canvas,
+                start_row=self.row,
+                start_column=self.column,
+                text=self.current_frame,
+                negative=True,
             )
 
             await asyncio.sleep(0)
@@ -39,10 +53,7 @@ class RocketAnimation:
 
     def _load_rocket_frames(self) -> None:
         self.frames = []
-        frames_paths = [
-            "content/rocket_frame_1.txt",
-            "content/rocket_frame_2.txt",
-        ]
+        frames_paths = ["content/rocket_frame_1.txt", "content/rocket_frame_2.txt"]
         for paths in frames_paths:
             with open(paths) as fh:
                 self.frames.append(fh.read())
