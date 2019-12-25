@@ -28,8 +28,8 @@ class RocketAnimation:
             )
 
             time.sleep(TIC_TIMEOUT)
+            # await asyncio.sleep(1)
 
-            await asyncio.sleep(1)
             draw_frame(
                 canvas=self._canvas,
                 start_row=self.row,
@@ -40,16 +40,16 @@ class RocketAnimation:
 
             await asyncio.sleep(0)
 
-    async def clear(self):
-        while True:
-            draw_frame(
-                canvas=self._canvas,
-                start_row=self.row,
-                start_column=self.column,
-                text=self.current_frame,
-                negative=True,
-            )
-            await asyncio.sleep(0)
+    # async def clear(self):
+    #     while True:
+    #         draw_frame(
+    #             canvas=self._canvas,
+    #             start_row=self.row,
+    #             start_column=self.column,
+    #             text=self.current_frame,
+    #             negative=True,
+    #         )
+    #         await asyncio.sleep(0)
 
     def _load_rocket_frames(self) -> None:
         self.frames = []
