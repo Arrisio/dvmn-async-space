@@ -8,7 +8,7 @@ from core.rocket_animation import RocketAnimation
 
 STARS_NAMBER = 50
 MAX_TIKS_TO_BLINK = 10  # in ticks
-
+TIC_TIMEOUT = .1
 
 async def blink(canvas, row, column, symbol="*", tiks_to_blink=10):
     blink_sequence = [curses.A_BOLD, curses.A_NORMAL, curses.A_DIM]
@@ -63,13 +63,12 @@ def draw(canvas):
                 coroutines.remove(coroutine)
 
         canvas.refresh()
-        # time.sleep(TIC_TIMEOUT)
+        time.sleep(TIC_TIMEOUT)
 
 
 def run():
     curses.update_lines_cols()
     curses.wrapper(draw)
-    time.sleep(1)
 
 
 if __name__ == "__main__":

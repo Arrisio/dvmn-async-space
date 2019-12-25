@@ -13,8 +13,8 @@ class RocketAnimation:
 
         self._load_rocket_frames()
         self._init_top_positions()
-        self._frame_swither = self._init_frame_switcher()
-        # self._frame_swither.send(None)
+        self._frame_swither = self._switche_frame()
+
 
     async def draw(self):
         while True:
@@ -27,8 +27,7 @@ class RocketAnimation:
                 text=self.current_frame,
             )
 
-            time.sleep(TIC_TIMEOUT)
-            # await asyncio.sleep(1)
+            await asyncio.sleep(0)
 
             draw_frame(
                 canvas=self._canvas,
@@ -38,18 +37,6 @@ class RocketAnimation:
                 negative=True,
             )
 
-            await asyncio.sleep(0)
-
-    # async def clear(self):
-    #     while True:
-    #         draw_frame(
-    #             canvas=self._canvas,
-    #             start_row=self.row,
-    #             start_column=self.column,
-    #             text=self.current_frame,
-    #             negative=True,
-    #         )
-    #         await asyncio.sleep(0)
 
     def _load_rocket_frames(self) -> None:
         self.frames = []
@@ -88,7 +75,7 @@ class RocketAnimation:
         else:
             self.column = new_column_wanted
 
-    async def _init_frame_switcher(self):
+    async def _switche_frame(self):
         while True:
             for frame in self.frames:
                 self.current_frame = frame
