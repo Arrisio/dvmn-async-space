@@ -3,6 +3,13 @@ import time
 from core.curses_tools import read_controls, draw_frame, get_frame_size
 
 TIC_TIMEOUT = 0.01
+import logging
+
+logging.basicConfig(
+    filename="example.log",
+    level=logging.DEBUG,
+    format="%(asctime)s|%(levelname)-8s|%(message)s",
+)
 
 
 class RocketAnimation:
@@ -15,11 +22,12 @@ class RocketAnimation:
         self._init_top_positions()
         self._frame_swither = self._switche_frame()
 
-
     async def draw(self):
         while True:
+
             self._frame_swither.send(None)
             self._set_new_rocket_position()
+            logging.debug(f"Drawing frame #{self.frame_number}")
             draw_frame(
                 canvas=self._canvas,
                 start_row=self.row,
@@ -29,6 +37,7 @@ class RocketAnimation:
 
             await asyncio.sleep(0)
 
+            logging.debug(f"Clear   frame #{self.frame_number}")
             draw_frame(
                 canvas=self._canvas,
                 start_row=self.row,
@@ -36,7 +45,6 @@ class RocketAnimation:
                 text=self.current_frame,
                 negative=True,
             )
-
 
     def _load_rocket_frames(self) -> None:
         self.frames = []
@@ -77,6 +85,7 @@ class RocketAnimation:
 
     async def _switche_frame(self):
         while True:
-            for frame in self.frames:
+            for frame_number, frame in enumerate(self.frames):
                 self.current_frame = frame
+                self.frame_number = frame_number
                 await asyncio.sleep(0)
