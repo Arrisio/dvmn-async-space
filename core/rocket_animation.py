@@ -20,14 +20,15 @@ class RocketAnimation:
 
         self._load_rocket_frames()
         self._init_top_positions()
-        self._frame_swither = self._switch_frame()
+
+        self.current_frame_number = 0
 
     async def draw(self):
         while True:
 
-            self._frame_swither.send(None)
+            # self._frame_swither.send(None)
+            self._switch_frame()
             self._set_new_rocket_position()
-            logging.debug(f"Drawing frame #{self.frame_number}")
             draw_frame(
                 canvas=self._canvas,
                 start_row=self.row,
@@ -37,7 +38,6 @@ class RocketAnimation:
 
             await asyncio.sleep(0)
 
-            logging.debug(f"Clear   frame #{self.frame_number}")
             draw_frame(
                 canvas=self._canvas,
                 start_row=self.row,
@@ -83,9 +83,10 @@ class RocketAnimation:
         else:
             self.column = new_column_wanted
 
-    async def _switch_frame(self):
-        while True:
-            for frame_number, frame in enumerate(self.frames):
-                self.current_frame = frame
-                self.frame_number = frame_number
-                await asyncio.sleep(0)
+    def _switch_frame(self):
+        if self.current_frame_number >= len(self.frames) - 1:
+            self.current_frame_number = 0
+        else:
+            self.current_frame_number += 1
+
+        self.current_frame = self.frames[self.current_frame_number]
