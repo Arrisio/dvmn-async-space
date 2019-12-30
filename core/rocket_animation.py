@@ -1,5 +1,14 @@
 import asyncio
+from itertools import cycle
 from core.curses_tools import read_controls, draw_frame, get_frame_size
+
+import logging
+
+logging.basicConfig(
+    filename="example.log",
+    level=logging.DEBUG,
+    format="%(asctime)s|%(levelname)-8s|%(message)s",
+)
 
 
 class RocketAnimation:
@@ -11,17 +20,18 @@ class RocketAnimation:
         self._load_rocket_frames()
         self._init_top_positions()
 
-        self.current_frame_number = 0
-
     async def draw(self):
         while True:
-            self._switch_frame()
+            # current_frame = next(self.frames)
+            current_frame = self.frames[next(self.frames_queue)]
+
+            logging.debug(current_frame)
             self._set_new_rocket_position()
             draw_frame(
                 canvas=self._canvas,
                 start_row=self.row,
                 start_column=self.column,
-                text=self.current_frame,
+                text=current_frame,
             )
 
             await asyncio.sleep(0)
@@ -30,16 +40,20 @@ class RocketAnimation:
                 canvas=self._canvas,
                 start_row=self.row,
                 start_column=self.column,
-                text=self.current_frame,
+                text=current_frame,
                 negative=True,
             )
 
     def _load_rocket_frames(self) -> None:
-        self.frames = []
+        frames = []
         frames_paths = ["content/rocket_frame_1.txt", "content/rocket_frame_2.txt"]
         for paths in frames_paths:
             with open(paths) as fh:
-                self.frames.append(fh.read())
+                frames.append(fh.read())
+
+        # self.frames = cycle(frames)
+        self.frames = frames
+        self.frames_queue = cycle(range(len(self.frames)))
 
     def _init_top_positions(self):
         max_rows, max_columns = self._canvas.getmaxyx()
@@ -70,11 +84,3 @@ class RocketAnimation:
             self.column = self.top_right_position
         else:
             self.column = new_column_wanted
-
-    def _switch_frame(self):
-        if self.current_frame_number >= len(self.frames) - 1:
-            self.current_frame_number = 0
-        else:
-            self.current_frame_number += 1
-
-        self.current_frame = self.frames[self.current_frame_number]
