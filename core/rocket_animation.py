@@ -22,38 +22,32 @@ class RocketAnimation:
 
     async def draw(self):
         while True:
-            current_frame = next(self.frames)
-            # current_frame = self.frames[next(self.frames_queue)]
+            for current_frame in self.frames:
+                self._set_new_rocket_position()
+                draw_frame(
+                    canvas=self._canvas,
+                    start_row=self.row,
+                    start_column=self.column,
+                    text=current_frame,
+                )
 
-            logging.debug(current_frame)
-            self._set_new_rocket_position()
-            draw_frame(
-                canvas=self._canvas,
-                start_row=self.row,
-                start_column=self.column,
-                text=current_frame,
-            )
+                await asyncio.sleep(0)
 
-            await asyncio.sleep(0)
-
-            draw_frame(
-                canvas=self._canvas,
-                start_row=self.row,
-                start_column=self.column,
-                text=current_frame,
-                negative=True,
-            )
+                draw_frame(
+                    canvas=self._canvas,
+                    start_row=self.row,
+                    start_column=self.column,
+                    text=current_frame,
+                    negative=True,
+                )
 
     def _load_rocket_frames(self) -> None:
-        frames = []
+        self.frames = []
         frames_paths = ["content/rocket_frame_1.txt", "content/rocket_frame_2.txt"]
         for paths in frames_paths:
             with open(paths) as fh:
-                frames.append(fh.read())
+                self.frames.append(fh.read())
 
-        self.frames = cycle(frames)
-        # self.frames = frames
-        # self.frames_queue = cycle(range(len(self.frames)))
 
     def _init_top_positions(self):
         max_rows, max_columns = self._canvas.getmaxyx()
