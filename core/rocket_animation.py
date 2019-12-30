@@ -20,7 +20,7 @@ class RocketAnimation:
 
         self._load_rocket_frames()
         self._init_top_positions()
-        self._frame_swither = self._switche_frame()
+        self._frame_swither = self._switch_frame()
 
     async def draw(self):
         while True:
@@ -83,7 +83,7 @@ class RocketAnimation:
         else:
             self.column = new_column_wanted
 
-    async def _switche_frame(self):
+    async def _switch_frame(self):
         while True:
             for frame_number, frame in enumerate(self.frames):
                 self.current_frame = frame
