@@ -1,15 +1,5 @@
 import asyncio
-import time
 from core.curses_tools import read_controls, draw_frame, get_frame_size
-
-TIC_TIMEOUT = 0.01
-import logging
-
-logging.basicConfig(
-    filename="example.log",
-    level=logging.DEBUG,
-    format="%(asctime)s|%(levelname)-8s|%(message)s",
-)
 
 
 class RocketAnimation:
@@ -25,8 +15,6 @@ class RocketAnimation:
 
     async def draw(self):
         while True:
-
-            # self._frame_swither.send(None)
             self._switch_frame()
             self._set_new_rocket_position()
             draw_frame(
