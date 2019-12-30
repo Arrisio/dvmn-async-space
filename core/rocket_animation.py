@@ -22,8 +22,8 @@ class RocketAnimation:
 
     async def draw(self):
         while True:
-            # current_frame = next(self.frames)
-            current_frame = self.frames[next(self.frames_queue)]
+            current_frame = next(self.frames)
+            # current_frame = self.frames[next(self.frames_queue)]
 
             logging.debug(current_frame)
             self._set_new_rocket_position()
@@ -51,9 +51,9 @@ class RocketAnimation:
             with open(paths) as fh:
                 frames.append(fh.read())
 
-        # self.frames = cycle(frames)
-        self.frames = frames
-        self.frames_queue = cycle(range(len(self.frames)))
+        self.frames = cycle(frames)
+        # self.frames = frames
+        # self.frames_queue = cycle(range(len(self.frames)))
 
     def _init_top_positions(self):
         max_rows, max_columns = self._canvas.getmaxyx()
