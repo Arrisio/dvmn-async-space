@@ -15,25 +15,24 @@ class RocketAnimation:
         self._init_top_positions()
 
     async def draw(self):
-        while True:
-            for current_frame in self.frames:
-                self._set_new_rocket_position()
-                draw_frame(
-                    canvas=self._canvas,
-                    start_row=self.row,
-                    start_column=self.column,
-                    text=current_frame,
-                )
+        for current_frame in cycle(self.frames):
+            self._set_new_rocket_position()
+            draw_frame(
+                canvas=self._canvas,
+                start_row=self.row,
+                start_column=self.column,
+                text=current_frame,
+            )
 
-                await asyncio.sleep(0)
+            await asyncio.sleep(0)
 
-                draw_frame(
-                    canvas=self._canvas,
-                    start_row=self.row,
-                    start_column=self.column,
-                    text=current_frame,
-                    negative=True,
-                )
+            draw_frame(
+                canvas=self._canvas,
+                start_row=self.row,
+                start_column=self.column,
+                text=current_frame,
+                negative=True,
+            )
 
     def _load_rocket_frames(self) -> None:
         self.frames = []
