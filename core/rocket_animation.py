@@ -12,7 +12,7 @@ logging.basicConfig(
 
 
 class RocketAnimation:
-    def __init__(self, canvas, start_row: int = None, start_column: int = None):
+    def __init__(self, canvas, start_row: int = None, start_column: int = None, need_draw=True):
         self._canvas = canvas
         self.row = start_row or canvas.getmaxyx()[0] // 2
         self.column = start_column or canvas.getmaxyx()[1] // 2
@@ -24,6 +24,7 @@ class RocketAnimation:
         while True:
             for current_frame in self.frames:
                 self._set_new_rocket_position()
+
                 draw_frame(
                     canvas=self._canvas,
                     start_row=self.row,
