@@ -2,16 +2,10 @@ import asyncio
 from itertools import cycle
 from core.curses_tools import read_controls, draw_frame, get_frame_size
 
-import logging
-
-logging.basicConfig(
-    filename="example.log",
-    level=logging.DEBUG,
-    format="%(asctime)s|%(levelname)-8s|%(message)s",
-)
-
 
 class RocketAnimation:
+    horizontal_movement_multiplier = 2  # двигаться по горизонтали быстрее , чтоб было комфортнее
+
     def __init__(self, canvas, start_row: int = None, start_column: int = None):
         self._canvas = canvas
         self.row = start_row or canvas.getmaxyx()[0] // 2
@@ -43,17 +37,18 @@ class RocketAnimation:
 
     def _load_rocket_frames(self) -> None:
         self.frames = []
-        frames_paths = ["content/rocket_frame_1.txt", "content/rocket_frame_2.txt"]
+        frames_paths = ["content/rocket_frame_1.txt",
+                        "content/rocket_frame_2.txt"]
         for paths in frames_paths:
             with open(paths) as fh:
                 self.frames.append(fh.read())
-
 
     def _init_top_positions(self):
         max_rows, max_columns = self._canvas.getmaxyx()
 
         max_frame_width = max(get_frame_size(frame)[1] for frame in self.frames)
-        max_frame_height = max(get_frame_size(frame)[0] for frame in self.frames)
+        max_frame_height = max(
+            get_frame_size(frame)[0] for frame in self.frames)
 
         self.top_left_position = 1
         self.top_right_position = max_columns - max_frame_width - 1
@@ -71,7 +66,7 @@ class RocketAnimation:
         else:
             self.row = new_row_wanted
 
-        new_column_wanted = self.column + columns_direction
+        new_column_wanted = self.column + columns_direction * self.horizontal_movement_multiplier
         if new_column_wanted <= self.top_left_position:
             self.column = self.top_left_position
         elif new_column_wanted >= self.top_right_position:
