@@ -1,8 +1,10 @@
 import time
 import curses
 
+from vendor.obstacles import show_obstacles
+
 from core import globals
-from core.garbage import fill_orbit_with_garbage
+from core.space_garbage import fill_orbit_with_garbage
 from core.settings import STARS_NAMBER, TIC_TIMEOUT
 from core.rocket_animation import RocketAnimation
 from core.star import  Star
