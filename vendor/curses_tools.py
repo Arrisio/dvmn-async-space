@@ -42,17 +42,17 @@ def draw_frame(canvas, start_row, start_column, text, negative=False):
     rows_number, columns_number = canvas.getmaxyx()
 
     for row, line in enumerate(text.splitlines(), round(start_row)):
-        if row < 0:
+        if row < 1:
             continue
 
-        if row >= rows_number:
+        if row >= rows_number-1:
             break
 
         for column, symbol in enumerate(line, round(start_column)):
-            if column < 0:
+            if column < 1:
                 continue
 
-            if column >= columns_number:
+            if column >= columns_number-1:
                 break
 
             if symbol == ' ':
