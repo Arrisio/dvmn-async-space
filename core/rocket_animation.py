@@ -3,13 +3,21 @@ from itertools import cycle
 from vendor.curses_tools import read_controls, draw_frame, get_frame_size
 from vendor.physics import update_speed
 
+
+from vendor.fire_animation import fire
+from core import globals
+
+
 class RocketAnimation:
-    horizontal_movement_multiplier = 2  # двигаться по горизонтали быстрее , чтоб было комфортнее
+    horizontal_movement_multiplier = (
+        2
+    )  # двигаться по горизонтали быстрее , чтоб было комфортнее
 
     def __init__(self, canvas, start_row: int = None, start_column: int = None):
         self._canvas = canvas
         self.row = start_row or canvas.getmaxyx()[0] // 2
         self.column = start_column or canvas.getmaxyx()[1] // 2
+        self.space_pressed = False
 
         self.row_speed = 0
         self.column_speed = 0
@@ -22,11 +30,18 @@ class RocketAnimation:
             self._set_new_rocket_position()
             draw_frame(
                 canvas=self._canvas,
-                start_row=self.row,
+                start_row=self.r    ow,
                 start_column=self.column,
                 text=current_frame,
             )
-
+            if self.space_pressed:
+                globals.coroutines.append(
+                    fire(
+                        canvas=self._canvas,
+                        start_column=self.column,
+                        start_row=self.row,
+                    )
+                )
             await asyncio.sleep(0)
 
             draw_frame(
@@ -39,8 +54,7 @@ class RocketAnimation:
 
     def _load_rocket_frames(self) -> None:
         self.frames = []
-        frames_paths = ["content/rocket_frame_1.txt",
-                        "content/rocket_frame_2.txt"]
+        frames_paths = ["content/rocket_frame_1.txt", "content/rocket_frame_2.txt"]
         for paths in frames_paths:
             with open(paths) as fh:
                 self.frames.append(fh.read())
@@ -49,8 +63,7 @@ class RocketAnimation:
         max_rows, max_columns = self._canvas.getmaxyx()
 
         max_frame_width = max(get_frame_size(frame)[1] for frame in self.frames)
-        max_frame_height = max(
-            get_frame_size(frame)[0] for frame in self.frames)
+        max_frame_height = max(get_frame_size(frame)[0] for frame in self.frames)
 
         self.top_left_position = 1
         self.top_right_position = max_columns - max_frame_width - 1
@@ -58,12 +71,14 @@ class RocketAnimation:
         self.top_bottom_position = max_rows - max_frame_height - 1
 
     def _set_new_rocket_position(self):
-        rows_direction, columns_direction, _ = read_controls(self._canvas)
+        rows_direction, columns_direction, self.space_pressed = read_controls(
+            self._canvas
+        )
         self.row_speed, self.column_speed = update_speed(
             row_speed=self.row_speed,
             column_speed=self.column_speed,
             rows_direction=rows_direction,
-            columns_direction=columns_direction
+            columns_direction=columns_direction,
         )
         new_row_wanted = self.row + self.row_speed
         if new_row_wanted <= self.top_up_position:
@@ -75,7 +90,9 @@ class RocketAnimation:
         else:
             self.row = new_row_wanted
 
-        new_column_wanted = self.column + self.column_speed * self.horizontal_movement_multiplier
+        new_column_wanted = (
+            self.column + self.column_speed * self.horizontal_movement_multiplier
+        )
         if new_column_wanted <= self.top_left_position:
             self.column = self.top_left_position
             self.column_speed = 0
@@ -88,6 +105,6 @@ class RocketAnimation:
         draw_frame(
             canvas=self._canvas,
             start_row=self.top_up_position,
-            start_column=self.top_right_position-8,
+            start_column=self.top_right_position - 8,
             text=f"row_spd {self.row_speed:.2f}\ncol_spd {self.column_speed:.2f}",
         )

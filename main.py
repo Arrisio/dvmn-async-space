@@ -7,7 +7,7 @@ from core.settings import STARS_NAMBER, TIC_TIMEOUT
 from core.rocket_animation import RocketAnimation
 from core.star import  Star
 
-
+# from vendor.fire_animation import fire
 def draw(canvas):
     canvas.border()
     canvas.nodelay(True)
@@ -21,6 +21,7 @@ def draw(canvas):
     globals.coroutines.append(fill_orbit_with_garbage(canvas))
 
     while True:
+        # globals.coroutines.append( fire(canvas=canvas, start_column=20, start_row=20 ))
         for coroutine in globals.coroutines[:]:
             try:
                 coroutine.send(None)
