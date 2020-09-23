@@ -19,19 +19,20 @@ async def fly_garbage(canvas, column, garbage_frame, speed=0.5):
 
     row = 0
 
-    frame_size = get_frame_size(garbage_frame)
+    obstacle = Obstacle(row, column, *get_frame_size(garbage_frame))
+    globals.obstacles.append(obstacle)
 
     while row < rows_number - 1:
-
+        obstacle.row = row
         draw_frame(canvas, row, column, garbage_frame)
 
-        obstacle = Obstacle(row, column, *frame_size)
-        bounding_box_frame = obstacle.get_bounding_box_frame()
-        draw_frame(canvas, row, column, bounding_box_frame)
+        draw_frame(canvas, row, column, obstacle.get_bounding_box_frame())
 
         await asyncio.sleep(0)
         draw_frame(canvas, row, column, garbage_frame, negative=True)
-        draw_frame(canvas, row, column, bounding_box_frame, negative=True)
+        draw_frame(
+            canvas, row, column, obstacle.get_bounding_box_frame(), negative=True
+        )
         row += speed
 
 
