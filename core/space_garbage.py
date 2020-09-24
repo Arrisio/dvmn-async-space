@@ -9,6 +9,11 @@ from vendor.obstacles import Obstacle
 
 import asyncio
 
+def has_collision_with_any_obstacle(obj_corner_row, obj_corner_column, obj_size_rows=1,
+                      obj_size_columns=1):
+    collided_obstacles = [obst for obst in globals.obstacles if obst.has_collision(obj_corner_row, obj_corner_column, obj_size_rows,obj_size_columns)]
+    if collided_obstacles:
+        return collided_obstacles
 
 async def fly_garbage(canvas, column, garbage_frame, speed=0.5):
     """Animate garbage, flying from top to bottom. Сolumn position will stay same, as specified on start."""
@@ -25,10 +30,10 @@ async def fly_garbage(canvas, column, garbage_frame, speed=0.5):
     while row < rows_number - 1:
         obstacle.row = row
         draw_frame(canvas, row, column, garbage_frame)
-
         draw_frame(canvas, row, column, obstacle.get_bounding_box_frame())
 
         await asyncio.sleep(0)
+
         draw_frame(canvas, row, column, garbage_frame, negative=True)
         draw_frame(
             canvas, row, column, obstacle.get_bounding_box_frame(), negative=True
