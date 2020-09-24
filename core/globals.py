@@ -1,2 +1,0 @@
-coroutines = []
-obstacles = []
