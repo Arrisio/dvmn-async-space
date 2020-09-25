@@ -5,9 +5,16 @@ from src.helpers import sleep
 
 
 async def show_fire_msg(canvas):
-    text = "Press SPACE to fire"
     while True:
         if globals.year >= settings.CANNON_AVALIABLE_YEAR:
+
+            # первые 5 лет показываем большую запись, потом - поскромнее
+            if globals.year < settings.CANNON_AVALIABLE_YEAR + 5:
+                text = "YOU HAVE A PLASMA-GAN! Press SPACE to fire"
+            else:
+                text = "Press SPACE to fire"
+
+
             draw_frame(canvas, 1, 1,text)
             canvas.syncup()
 

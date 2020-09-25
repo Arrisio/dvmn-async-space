@@ -48,7 +48,7 @@ def draw(canvas):
     globals.coroutines.append(fill_orbit_with_garbage(canvas))
 
 
-    information_panel = canvas.derwin(5, 30, canvas.getmaxyx()[0]-7, 3 )
+    information_panel = canvas.derwin(5, 44, canvas.getmaxyx()[0]-7, 3 )
     globals.coroutines.append(update_year())
     globals.coroutines.append(show_year(information_panel))
     globals.coroutines.append(show_fire_msg(information_panel))

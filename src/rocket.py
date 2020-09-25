@@ -4,8 +4,8 @@ from vendor.curses_tools import read_controls, draw_frame, get_frame_size
 from vendor.physics import update_speed
 from vendor.explosion import explode
 from src.fire_animation import fire
-from src import globals, settings
 from src.space_garbage import has_collision_with_any_obstacle
+from src import globals, settings
 
 
 class RocketCollidedException(Exception):
@@ -52,7 +52,7 @@ class Rocket:
                 start_column=self.column,
                 text=current_frame,
             )
-            if self.space_pressed:
+            if self.space_pressed and globals.year>=settings.CANNON_AVALIABLE_YEAR :
                 globals.coroutines.append(
                     fire(
                         canvas=self._canvas,
