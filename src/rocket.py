@@ -120,10 +120,13 @@ class Rocket:
         else:
             self.column = new_column_wanted
 
-        if settings.SHOW_ROCKET_SPEED:
+    def draw_speed(self):
+
+        while True:
             draw_frame(
                 canvas=self._canvas,
                 start_row=self.top_up_position,
                 start_column=self.top_right_position - 8,
                 text=f"row_spd {self.row_speed:.2f}\ncol_spd {self.column_speed:.2f}",
             )
+            await asyncio.sleep(0)
