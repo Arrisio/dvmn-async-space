@@ -2,9 +2,14 @@ import os
 
 TIC_TIMEOUT = 0.1
 
+#stars
 STARS_NUMBER = 50
+STAR_SYMBOLS = "+*.:"
 MAX_TIKS_TO_BLINK_STAR = 10  # in ticks
 
+
+
+#garbage
 GARBAGE_FRAMES_DIR = os.path.join("content", "trash_frames")
 GAME_OVER_FRAME = os.path.join("content", "game_over.txt")
 

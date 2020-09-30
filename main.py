@@ -1,16 +1,15 @@
 import time
 import curses
-import asyncio
+import random
 
 from src import globals, settings
 from src.space_garbage import fill_orbit_with_garbage
-from src.settings import STARS_NUMBER, TIC_TIMEOUT
 from src.rocket import Rocket, RocketCollidedException
-from src.star import Star
+from src.star import star_blink
 from src.messages import show_year, show_fire_msg
 
 from vendor.curses_tools import draw_frame, get_frame_size
-from src.helpers import sleep
+from src.helpers import sleep, get_random_position
 
 
 async def update_year():
@@ -25,7 +24,6 @@ async def game_over(canvas):
 
     text_height, text_width = get_frame_size(game_over_text)
     screen_height, screen_width = canvas.getmaxyx()
-
 
     while True:
         draw_frame(
@@ -42,16 +40,24 @@ def draw(canvas):
     canvas.nodelay(True)
     curses.curs_set(False)
 
-    globals.coroutines = [Star(canvas).blink() for _ in range(STARS_NUMBER)]
+    globals.coroutines = [
+        star_blink(
+            canvas,
+            *get_random_position(canvas),
+            blink_period=random.randint(1, settings.MAX_TIKS_TO_BLINK_STAR)
+        )
+        for _ in range(settings.STARS_NUMBER)
+    ]
     globals.coroutines.append(Rocket(canvas).draw())
     globals.coroutines.append(fill_orbit_with_garbage(canvas))
-
 
     info_panel = canvas.derwin(
         settings.INFOPANEL_HEIGHT,
         settings.INFOPANEL_WIDTH,
-        canvas.getmaxyx()[0]-settings.INFOPANEL_HEIGHT-settings.INFOPANEL_BOTTOM_INDENT,
-        settings.INFOPANEL_LEFT_INDENT
+        canvas.getmaxyx()[0]
+        - settings.INFOPANEL_HEIGHT
+        - settings.INFOPANEL_BOTTOM_INDENT,
+        settings.INFOPANEL_LEFT_INDENT,
     )
     globals.coroutines.append(update_year())
     globals.coroutines.append(show_year(info_panel))
@@ -68,7 +74,7 @@ def draw(canvas):
                 globals.coroutines.append(game_over(canvas))
 
         canvas.refresh()
-        time.sleep(TIC_TIMEOUT)
+        time.sleep(settings.TIC_TIMEOUT)
 
 
 def run():
@@ -78,5 +84,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-
-
