@@ -48,7 +48,8 @@ def draw(canvas):
         )
         for _ in range(settings.STARS_NUMBER)
     ]
-    globals.coroutines.append(Rocket(canvas).draw())
+    rocket = Rocket(canvas)
+    globals.coroutines.append(rocket.draw())
     globals.coroutines.append(fill_orbit_with_garbage(canvas))
 
     info_panel = canvas.derwin(
@@ -62,6 +63,8 @@ def draw(canvas):
     globals.coroutines.append(update_year())
     globals.coroutines.append(show_year(info_panel))
     globals.coroutines.append(show_fire_msg(info_panel))
+    if settings.SHOW_ROCKET_SPEED:
+        globals.coroutines.append(rocket.draw_speed())
 
     while True:
         for coroutine in globals.coroutines[:]:
