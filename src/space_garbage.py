@@ -24,25 +24,17 @@ class Garbage:
 
         self.obstacle = Obstacle(row, column, *get_frame_size(frame))
 
-
     async def draw(self):
         while self.obstacle.row < self.rows_number - 1:
             if self.obstacle not  in globals.obstacles:
                 return
 
             draw_frame(self.canvas, self.obstacle.row, self.obstacle.column, self.frame)
-
             await sleep()
-
             draw_frame(self.canvas, self.obstacle.row, self.obstacle.column, self.frame, negative=True)
-
             self.obstacle.row += self.speed
 
         globals.obstacles.remove(self.obstacle)
-
-    def register(self):
-        globals.obstacles.append(self.obstacle)
-        globals.coroutines.append(self.draw())
 
 
 def get_collided_obstacles(
@@ -88,6 +80,7 @@ async def fill_orbit_with_garbage(canvas):
                 frame = fh.read()
 
             garbage = Garbage(frame=frame, canvas=canvas)
-            garbage.register()
+            globals.obstacles.append(garbage.obstacle)
+            globals.coroutines.append(garbage.draw())
 
         await sleep(delay_tics or 1)
