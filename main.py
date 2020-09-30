@@ -4,7 +4,7 @@ import asyncio
 
 from src import globals, settings
 from src.space_garbage import fill_orbit_with_garbage
-from src.settings import STARS_NAMBER, TIC_TIMEOUT
+from src.settings import STARS_NUMBER, TIC_TIMEOUT
 from src.rocket import Rocket, RocketCollidedException
 from src.star import Star
 from src.messages import show_year, show_fire_msg
@@ -43,7 +43,7 @@ def draw(canvas):
     canvas.nodelay(True)
     curses.curs_set(False)
 
-    globals.coroutines = [Star(canvas).blink() for _ in range(STARS_NAMBER)]
+    globals.coroutines = [Star(canvas).blink() for _ in range(STARS_NUMBER)]
     globals.coroutines.append(Rocket(canvas).draw())
     globals.coroutines.append(fill_orbit_with_garbage(canvas))
 

@@ -2,7 +2,7 @@ import os
 
 TIC_TIMEOUT = 0.1
 
-STARS_NAMBER = 50
+STARS_NUMBER = 50
 MAX_TIKS_TO_BLINK_STAR = 10  # in ticks
 
 GARBAGE_FRAMES_DIR = os.path.join("content", "trash_frames")
