@@ -25,7 +25,7 @@ class Garbage(Obstacle):
         column = min(column, columns_number - 1)
         row = 0
 
-        super(Garbage, self).__init__(row, column, *get_frame_size(frame))
+        super().__init__(row, column, *get_frame_size(frame))
 
     async def draw(self):
         while self.row < self.rows_number - 1:
