@@ -1,8 +1,8 @@
-import asyncio
 from itertools import cycle
 from vendor.curses_tools import read_controls, draw_frame, get_frame_size
 from vendor.physics import update_speed
 from vendor.explosion import explode
+from src.helpers import sleep
 from src.fire_animation import fire
 from src.space_garbage import has_collision_with_any_obstacle
 from src import globals, settings
@@ -60,7 +60,7 @@ class Rocket:
                         start_row=self.row,
                     )
                 )
-            await asyncio.sleep(0)
+            await sleep()
 
             draw_frame(
                 canvas=self._canvas,
@@ -120,7 +120,7 @@ class Rocket:
         else:
             self.column = new_column_wanted
 
-    def draw_speed(self):
+    async def draw_speed(self):
 
         while True:
             draw_frame(
@@ -129,4 +129,4 @@ class Rocket:
                 start_column=self.top_right_position - 8,
                 text=f"row_spd {self.row_speed:.2f}\ncol_spd {self.column_speed:.2f}",
             )
-            await asyncio.sleep(0)
+            await sleep()
