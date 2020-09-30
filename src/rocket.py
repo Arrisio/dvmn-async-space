@@ -19,10 +19,11 @@ def get_top_positions(canvas, object_width, object_height):
     return top_left_position, top_right_position, top_up_position, top_bottom_position
 
 
-class RocketController:
-    # двигаться по горизонтали быстрее , чтоб было комфортнее
-    horizontal_movement_booster = 2
+class RocketCollidedException(Exception):
+    pass
 
+
+class RocketController:
     space_pressed = False
     row_speed = 0
     column_speed = 0
@@ -42,31 +43,46 @@ class RocketController:
         self.row = start_row or canvas.getmaxyx()[0] // 2
         self.column = start_column or canvas.getmaxyx()[1] // 2
 
-    def update(self):
-        rows_direction, columns_direction, self.space_pressed = read_controls(self.canvas)
-        row_speed, column_speed = update_speed(
-            row_speed=self.row_speed,
-            column_speed=self.column_speed,
-            rows_direction=rows_direction,
-            columns_direction=columns_direction,
-        )
+    async def update(self):
+        while True:
+            rows_direction, columns_direction, self.space_pressed = read_controls(
+                self.canvas
+            )
+            row_speed, column_speed = update_speed(
+                row_speed=self.row_speed,
+                column_speed=self.column_speed,
+                rows_direction=rows_direction,
+                columns_direction=columns_direction,
+            )
 
-        self.column, self.column_speed = self.get_new_position_and_speed(
-            self.column,
-            column_speed,
-            self.top_left_position,
-            self.top_right_position,
-            self.horizontal_movement_booster,
-        )
+            self.column, self.column_speed = self.get_new_position_and_speed(
+                self.column,
+                column_speed,
+                self.top_left_position,
+                self.top_right_position,
+            )
 
-        self.row, self.row_speed = self.get_new_position_and_speed(
-            self.row, row_speed, self.top_up_position, self.top_bottom_position
-        )
+            self.row, self.row_speed = self.get_new_position_and_speed(
+                self.row, row_speed, self.top_up_position, self.top_bottom_position
+            )
+
+            self.process_shot()
+            self.process_rocket_collision()
+
+            await sleep()
+
+    def process_shot(self):
+        if self.space_pressed and globals.year >= settings.CANNON_AVALIABLE_YEAR:
+            globals.coroutines.append(
+                fire(
+                    canvas=self.canvas, start_column=self.column + 2, start_row=self.row
+                )
+            )
 
     def get_new_position_and_speed(
-        _, current_position, speed, top_min, top_max, booster=1
+        _, current_position, speed, top_min, top_max
     ):
-        position_wanted = current_position + speed * booster
+        position_wanted = current_position + speed
         if position_wanted <= top_min:
             return top_min, 0
         elif position_wanted >= top_max:
@@ -74,60 +90,49 @@ class RocketController:
         else:
             return position_wanted, speed
 
+    def process_rocket_collision(self):
+        if has_collision_with_any_obstacle(
+            obj_corner_column=self.column,
+            obj_corner_row=self.row,
+            obj_size_rows=self.height,
+        ):
+            globals.coroutines.append(
+                explode(
+                    canvas=self.canvas,
+                    center_row=self.row + self.width // 2,
+                    center_column=self.column + self.height // 2,
+                )
+            )
+            raise RocketCollidedException
 
-class RocketCollidedException(Exception):
-    pass
+
+
 
 
 class Rocket:
     def __init__(self, canvas, start_row: int = None, start_column: int = None):
-        self._canvas = canvas
-
+        self.canvas = canvas
         self._load_rocket_frames()
         self.controller = RocketController(canvas, self.frames, start_row, start_column)
 
     async def draw(self):
         for current_frame in cycle(self.frames):
-            if has_collision_with_any_obstacle(
-                obj_corner_column=self.controller.column,
-                obj_corner_row=self.controller.row,
-                obj_size_rows=self.controller.height,
-            ):
-                globals.coroutines.append(
-                    explode(
-                        canvas=self._canvas,
-                        center_row=self.controller.row + self.controller.width // 2,
-                        center_column=self.controller.column
-                        + self.controller.height // 2,
-                    )
-                )
-                raise RocketCollidedException
-
-            self.controller.update()
+            current_row = self.controller.row
+            current_column = self.controller.column
 
             draw_frame(
-                canvas=self._canvas,
-                start_row=self.controller.row,
-                start_column=self.controller.column,
-                text=current_frame,
+                canvas=self.canvas,
+                start_row=current_row,
+                start_column=current_column,
+                text=current_frame
             )
-            if (
-                self.controller.space_pressed
-                and globals.year >= settings.CANNON_AVALIABLE_YEAR
-            ):
-                globals.coroutines.append(
-                    fire(
-                        canvas=self._canvas,
-                        start_column=self.controller.column + 2,
-                        start_row=self.controller.row,
-                    )
-                )
-            await sleep()
+
+            await sleep(2)
 
             draw_frame(
-                canvas=self._canvas,
-                start_row=self.controller.row,
-                start_column=self.controller.column,
+                canvas=self.canvas,
+                start_row=current_row,
+                start_column=current_column,
                 text=current_frame,
                 negative=True,
             )
@@ -139,12 +144,11 @@ class Rocket:
             with open(paths) as fh:
                 self.frames.append(fh.read())
 
-
     async def draw_speed(self):
 
         while True:
             draw_frame(
-                canvas=self._canvas,
+                canvas=self.canvas,
                 start_row=self.controller.top_up_position,
                 start_column=self.controller.top_right_position - 8,
                 text=f"row_spd {self.controller.row_speed:.2f}\ncol_spd {self.controller.column_speed:.2f}",

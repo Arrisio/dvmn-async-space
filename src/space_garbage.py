@@ -2,7 +2,6 @@ import os
 import random
 
 from src import globals
-from src import settings
 from src.helpers import get_random_position, sleep
 from src.settings import GARBAGE_FRAMES_DIR
 from vendor.curses_tools import draw_frame, get_frame_size
@@ -12,8 +11,6 @@ from vendor.game_scenario import get_garbage_delay_tics
 
 
 class Garbage:
-    _destroyed = False
-
     def __init__(self, canvas, frame, speed=0.5):
         self.canvas = canvas
         self.frame = frame
@@ -46,19 +43,6 @@ class Garbage:
     def register(self):
         globals.obstacles.append(self.obstacle)
         globals.coroutines.append(self.draw())
-
-    # def destroy(self):
-    #     self._destroyed = True
-    #     globals.obstacles.remove(self.obstacle)
-    #     globals.coroutines.append(
-    #         explode(
-    #             self.canvas,
-    #             center_row=self.row + self.rows_size // 2,
-    #             center_column=self.column + self.columns_size // 2,
-    #         )
-    #     )
-
-
 
 
 def get_collided_obstacles(
