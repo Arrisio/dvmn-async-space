@@ -9,6 +9,7 @@ from src.star import star_blink
 from src.messages import show_year, show_fire_msg
 
 from vendor.curses_tools import draw_frame, get_frame_size
+from vendor.obstacles import show_obstacles
 from src.helpers import sleep, get_random_position
 
 
@@ -65,6 +66,9 @@ def draw(canvas):
     globals.coroutines.append(show_fire_msg(info_panel))
     if settings.SHOW_ROCKET_SPEED:
         globals.coroutines.append(rocket.draw_speed())
+
+    if settings.SHOW_OBSTACLE_BORDERS:
+        globals.coroutines.append(show_obstacles(canvas, globals.obstacles))
 
     while True:
         for coroutine in globals.coroutines[:]:

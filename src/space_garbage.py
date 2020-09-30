@@ -11,7 +11,7 @@ from vendor.explosion import explode
 from vendor.game_scenario import get_garbage_delay_tics
 
 
-class Garbage(Obstacle):
+class Garbage:
     _destroyed = False
 
     def __init__(self, canvas, frame, speed=0.5):
@@ -25,35 +25,24 @@ class Garbage(Obstacle):
         column = min(column, columns_number - 1)
         row = 0
 
-        super().__init__(row, column, *get_frame_size(frame))
+        self.obstacle = Obstacle(row, column, *get_frame_size(frame))
+
 
     async def draw(self):
-        while self.row < self.rows_number - 1:
+        while self.obstacle.row < self.rows_number - 1:
             if self._destroyed:
                 return
 
-            draw_frame(self.canvas, self.row, self.column, self.frame)
-            if settings.SHOW_OBSTACLE_BORDERS:
-                draw_frame(
-                    self.canvas, self.row, self.column, self.get_bounding_box_frame()
-                )
+            draw_frame(self.canvas, self.obstacle.row, self.obstacle.column, self.frame)
 
             await sleep()
 
-            draw_frame(self.canvas, self.row, self.column, self.frame, negative=True)
-            if settings.SHOW_OBSTACLE_BORDERS:
-                draw_frame(
-                    self.canvas,
-                    self.row,
-                    self.column,
-                    self.get_bounding_box_frame(),
-                    negative=True,
-                )
+            draw_frame(self.canvas, self.obstacle.row, self.obstacle.column, self.frame, negative=True)
 
-            self.row += self.speed
+            self.obstacle.row += self.speed
 
     def register(self):
-        globals.obstacles.append(self)
+        globals.obstacles.append(self.obstacle)
         globals.coroutines.append(self.draw())
 
     def destroy(self):

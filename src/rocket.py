@@ -139,6 +139,7 @@ class Rocket:
             with open(paths) as fh:
                 self.frames.append(fh.read())
 
+
     async def draw_speed(self):
 
         while True:
