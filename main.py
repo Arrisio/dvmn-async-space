@@ -47,10 +47,15 @@ def draw(canvas):
     globals.coroutines.append(fill_orbit_with_garbage(canvas))
 
 
-    information_panel = canvas.derwin(5, 44, canvas.getmaxyx()[0]-7, 3 )
+    info_panel = canvas.derwin(
+        settings.INFOPANEL_HEIGHT,
+        settings.INFOPANEL_WIDTH,
+        canvas.getmaxyx()[0]-settings.INFOPANEL_HEIGHT-settings.INFOPANEL_BOTTOM_INDENT,
+        settings.INFOPANEL_LEFT_INDENT
+    )
     globals.coroutines.append(update_year())
-    globals.coroutines.append(show_year(information_panel))
-    globals.coroutines.append(show_fire_msg(information_panel))
+    globals.coroutines.append(show_year(info_panel))
+    globals.coroutines.append(show_fire_msg(info_panel))
 
     while True:
         for coroutine in globals.coroutines[:]:
