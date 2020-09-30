@@ -43,7 +43,7 @@ class RocketController:
         self.column = start_column or canvas.getmaxyx()[1] // 2
 
     def update(self):
-        rows_direction, columns_direction, space_pressed = read_controls(self.canvas)
+        rows_direction, columns_direction, self.space_pressed = read_controls(self.canvas)
         row_speed, column_speed = update_speed(
             row_speed=self.row_speed,
             column_speed=self.column_speed,
@@ -118,8 +118,8 @@ class Rocket:
                 globals.coroutines.append(
                     fire(
                         canvas=self._canvas,
-                        start_column=self.column + 2,
-                        start_row=self.row,
+                        start_column=self.controller.column + 2,
+                        start_row=self.controller.row,
                     )
                 )
             await sleep()

@@ -30,7 +30,7 @@ class Garbage:
 
     async def draw(self):
         while self.obstacle.row < self.rows_number - 1:
-            if self._destroyed:
+            if self.obstacle not  in globals.obstacles:
                 return
 
             draw_frame(self.canvas, self.obstacle.row, self.obstacle.column, self.frame)
@@ -41,20 +41,24 @@ class Garbage:
 
             self.obstacle.row += self.speed
 
+        globals.obstacles.remove(self.obstacle)
+
     def register(self):
         globals.obstacles.append(self.obstacle)
         globals.coroutines.append(self.draw())
 
-    def destroy(self):
-        self._destroyed = True
-        globals.obstacles.remove(self)
-        globals.coroutines.append(
-            explode(
-                self.canvas,
-                center_row=self.row + self.rows_size // 2,
-                center_column=self.column + self.columns_size // 2,
-            )
-        )
+    # def destroy(self):
+    #     self._destroyed = True
+    #     globals.obstacles.remove(self.obstacle)
+    #     globals.coroutines.append(
+    #         explode(
+    #             self.canvas,
+    #             center_row=self.row + self.rows_size // 2,
+    #             center_column=self.column + self.columns_size // 2,
+    #         )
+    #     )
+
+
 
 
 def get_collided_obstacles(
@@ -78,13 +82,16 @@ def has_collision_with_any_obstacle(
     return len(collided_obstacles) > 0
 
 
-def destroy_collided_obstacles(
-    obj_corner_row, obj_corner_column, obj_size_rows=1, obj_size_columns=1
-):
-    for obstacle in get_collided_obstacles(
-        obj_corner_row, obj_corner_column, obj_size_rows, obj_size_columns
-    ):
-        obstacle.destroy()
+def destroy_obstacles(canvas, collided_obstacles):
+    for obstacle in collided_obstacles:
+        globals.obstacles.remove(obstacle)
+        globals.coroutines.append(
+            explode(
+                canvas,
+                center_row=obstacle.row + obstacle.rows_size // 2,
+                center_column=obstacle.column + obstacle.columns_size // 2,
+            )
+        )
 
 
 async def fill_orbit_with_garbage(canvas):
