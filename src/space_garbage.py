@@ -83,14 +83,10 @@ def get_collided_obstacles(
 def has_collision_with_any_obstacle(
     obj_corner_row, obj_corner_column, obj_size_rows=1, obj_size_columns=1
 ):
-    return (
-        len(
-            get_collided_obstacles(
-                obj_corner_row, obj_corner_column, obj_size_rows, obj_size_columns
-            )
-        )
-        > 0
+    collided_obstacles = get_collided_obstacles(
+        obj_corner_row, obj_corner_column, obj_size_rows, obj_size_columns
     )
+    return len(collided_obstacles) > 0
 
 
 def destroy_collided_obstacles(
@@ -106,12 +102,9 @@ async def fill_orbit_with_garbage(canvas):
     while True:
         _, col = _get_random_position(canvas)
 
-        if delay_tics:= get_garbage_delay_tics(globals.year):
-            with open(
-                os.path.join(
-                    GARBAGE_FRAMES_DIR, random.choice(os.listdir(GARBAGE_FRAMES_DIR))
-                )
-            ) as fh:
+        if delay_tics := get_garbage_delay_tics(globals.year):
+            random_frame_file = random.choice(os.listdir(GARBAGE_FRAMES_DIR))
+            with open(os.path.join(GARBAGE_FRAMES_DIR, random_frame_file)) as fh:
                 frame = fh.read()
 
             garbage = Garbage(frame=frame, canvas=canvas)
