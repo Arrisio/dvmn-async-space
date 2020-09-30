@@ -1,7 +1,7 @@
 import random
 import asyncio
 
-def _get_random_position(canvas):
+def get_random_position(canvas):
     screen_height, screen_width = canvas.getmaxyx()
     return (
         random.randint(1, screen_height - 2),

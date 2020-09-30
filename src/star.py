@@ -1,7 +1,7 @@
 import asyncio
 import curses
 import random
-from src.helpers import _get_random_position, sleep
+from src.helpers import get_random_position, sleep
 from src.settings import MAX_TIKS_TO_BLINK_STAR
 
 class Star:
@@ -9,7 +9,7 @@ class Star:
 
     def __init__(self, canvas ):
         self.canvas = canvas
-        self.row, self.column =_get_random_position(canvas)
+        self.row, self.column =get_random_position(canvas)
         self.blink_period = random.randint(1, MAX_TIKS_TO_BLINK_STAR)
         self.symbol = random.choice("+*.:")
 

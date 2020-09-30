@@ -3,7 +3,7 @@ import random
 
 from src import globals
 from src import settings
-from src.helpers import _get_random_position, sleep
+from src.helpers import get_random_position, sleep
 from src.settings import GARBAGE_FRAMES_DIR
 from vendor.curses_tools import draw_frame, get_frame_size
 from vendor.obstacles import Obstacle
@@ -20,7 +20,7 @@ class Garbage(Obstacle):
         self.speed = speed
 
         self.rows_number, columns_number = canvas.getmaxyx()
-        _, column = _get_random_position(canvas)
+        _, column = get_random_position(canvas)
         column = max(column, 0)
         column = min(column, columns_number - 1)
         row = 0
@@ -100,7 +100,7 @@ def destroy_collided_obstacles(
 
 async def fill_orbit_with_garbage(canvas):
     while True:
-        _, col = _get_random_position(canvas)
+        _, col = get_random_position(canvas)
 
         if delay_tics := get_garbage_delay_tics(globals.year):
             random_frame_file = random.choice(os.listdir(GARBAGE_FRAMES_DIR))
