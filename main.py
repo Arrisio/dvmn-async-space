@@ -34,7 +34,6 @@ async def game_over(canvas):
             start_column=screen_width // 2 - text_width // 2,
             text=game_over_text,
         )
-        # await asyncio.sleep(0)
         await sleep()
 
 
@@ -52,10 +51,8 @@ def draw(canvas):
     globals.coroutines.append(update_year())
     globals.coroutines.append(show_year(information_panel))
     globals.coroutines.append(show_fire_msg(information_panel))
-    # canvas.syncup()
 
     while True:
-        # globals.coroutines.append( fire(canvas=canvas, start_column=20, start_row=20 ))
         for coroutine in globals.coroutines[:]:
             try:
                 coroutine.send(None)
