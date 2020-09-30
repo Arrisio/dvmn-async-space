@@ -11,8 +11,8 @@ A simple space game using `asyncio` and `curses`.
 
 ### Clone the repository
 ```bash
-git clone --recursive https://github.com/artbataev/dvmn_async_spaceship.git
-cd dvmn_async_spaceship
+git clone https://github.com/Arrisio/dvmn-async-space.git
+cd dvmn-async-space
 ```
 
 ### Run the game
